@@ -6,6 +6,11 @@ import io.ebean.Database;
 import io.ebean.SqlUpdate;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.core.io.ClassPathResource;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
 
 @SpringBootApplication
 public class EbdemoApplication {
@@ -13,12 +18,22 @@ public class EbdemoApplication {
 	public static void main(String[] args) {
 
 		SpringApplication.run(EbdemoApplication.class, args);
-		cleanUp();
+		runInitScript();
 		insertUser();
 		findUser();
 		insertAndDeleteUser();
 	}
+	public static void runInitScript(){
 
+		Database database = DB.getDefault();
+		try {
+			final URL url = new ClassPathResource("dbInit.sql").getURL();
+			database.script().run(url);
+		} catch (IOException ioException) {
+			ioException.printStackTrace();
+		}
+
+	}
 	public static void insertUser(){
 		User user = new User("Query User");
 		user.setEmail("qu@example.com");
